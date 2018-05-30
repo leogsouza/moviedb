@@ -1,3 +1,32 @@
-<p>
-  movies works!
-</p>
+<mat-toolbar color="primary">
+    NG6 Movie Database
+    <span class="app-toolbar-filler"></span>
+    <button mat-button (click)="create()">New</button>    
+</mat-toolbar>
+<div class="app-content">
+    <div>
+        <mat-form-field>
+            <input matInput placeholder="Search" (keyup.enter)="search($event)">            
+        </mat-form-field>
+    </div>
+    <table style="width: 100%; margin-top: 10px; border-collapse: collapse">
+        <thead style="text-align: left">
+            <tr>
+                <th>Title</th>
+                <th>Genre</th>
+                <th>Digital</th>
+                <th>Blu-Ray</th>
+                <th>DVD</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let movie of movies" style="border-top: 1px solid black">
+                <td>{{ movie.name }}</td>
+                <td>{{ movie.genre}}</td>
+                <td><mat-checkbox [disabled]="true" [checked]="movie.formats.digital || false"></mat-checkbox></td>
+                <td><mat-checkbox [disabled]="true" [checked]="movie.formats.bluray || false"></mat-checkbox></td>
+                <td><mat-checkbox [disabled]="true" [checked]="movie.formats.dvd || false"></mat-checkbox></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

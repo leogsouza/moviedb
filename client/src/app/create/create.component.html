@@ -1,3 +1,27 @@
-<p>
-  create works!
-</p>
+<mat-toolbar color="primary">
+  NG6 Movie Database
+  <span class="app-toolbar-filler"></span>
+  <button mat-button (click)="save()">Save</button>
+</mat-toolbar>
+<div class="app-content">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Bought a new Movie?</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field>
+        <input matInput placeholder="Name" [(ngModel)]="movie.name">
+      </mat-form-field>
+      <br />
+      <mat-form-field>
+          <input matInput placeholder="Genre" [(ngModel)]="movie.genre">
+      </mat-form-field>
+      <br>
+      <mat-checkbox [(ngModel)]="movie.formats.digital">Digital</mat-checkbox>
+      <br>
+      <mat-checkbox [(ngModel)]="movie.formats.bluray">Blu-Ray</mat-checkbox>
+      <br>
+      <mat-checkbox [(ngModel)]="movie.formats.dvd">DVD</mat-checkbox>
+    </mat-card-content>
+  </mat-card>
+</div>

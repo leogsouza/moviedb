@@ -57,9 +57,13 @@ func SearchEndpoint(w http.ResponseWriter, req *http.Request) {
 	n1qlParams = append(n1qlParams, strings.ToLower(params["title"]))
 
 	query := gocb.NewN1qlQuery("SELECT `" + bucketName + "`.* FROM `" + bucketName +
-		"` WHERE LOWER(NAME) LIKE '%' || $1 || '%'")
+		"` WHERE LOWER(name) LIKE LOWER('%' || $1 || '%')")
 	query.Consistency(gocb.RequestPlus)
-	rows, _ := bucket.ExecuteN1qlQuery(query, n1qlParams)
+
+	rows, err := bucket.ExecuteN1qlQuery(query, n1qlParams)
+	if err != nil {
+		panic(err)
+	}
 	var row Movie
 	for rows.Next(&row) {
 		movies = append(movies, row)
@@ -82,13 +86,22 @@ func CreateEndpoint(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	fmt.Println("Starting server at http://localhost:3333...")
+
 	cluster, _ := gocb.Connect("couchbase://localhost")
+	cluster.Authenticate(gocb.PasswordAuthenticator{
+		Username: "Administrator",
+		Password: "admin123",
+	})
 	bucketName = "restfull-sample"
-	bucket, _ = cluster.OpenBucket(bucketName, "")
+	var err error
+	bucket, err = cluster.OpenBucket(bucketName, "")
+	if err != nil {
+		panic(err)
+	}
 	router := mux.NewRouter()
 	router.HandleFunc("/movies", ListEndpoint).Methods("GET")
 	router.HandleFunc("/movies", CreateEndpoint).Methods("POST")
-	router.HandleFunc("/earch/{title}", SearchEndpoint).Methods("GET")
+	router.HandleFunc("/search/{title}", SearchEndpoint).Methods("GET")
 	log.Fatal(http.ListenAndServe(":3333",
 		handlers.CORS(handlers.AllowedMethods([]string{"GET", "POST", "PUT",
 			"HEAD"}), handlers.AllowedOrigins([]string{"*"}))(router)))
